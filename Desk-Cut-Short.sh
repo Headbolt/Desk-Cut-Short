@@ -17,9 +17,11 @@
 #
 # HISTORY
 #
-#   Version: 1.0 - 25/08/2021
+#   Version: 1.1 - 26/08/2021
 #
 #   - 25/08/2021 - V1.0 - Created by Headbolt
+#   - 26/08/2021 - V1.1 - Updated by Headbolt
+#							Updated to deal with issues around Spaces in the file name
 #
 ###############################################################################################################################################
 #
@@ -32,6 +34,8 @@
 Username=$3 # Grab the username for the current logged in user.
 URL="$4" # Grab the URL from JAMF variable #4 eg. http://domain.com
 ShortCutName="$5" # Grab the name of the Desktop Shortcut to create from JAMF variable #5 eg. shortcut.url
+#
+ShortCutPath="/Users/$Username/Desktop/$ShortCutName"
 #
 # Set the name of the script for later logging
 ScriptName="append prefix here as needed - Check and Create/Re-Create Desktop Internet Shortcuts"
@@ -69,7 +73,7 @@ fi
 /bin/echo # Outputting a Blank Line for Reporting Purposes
 /bin/echo 'Checking Section Name '"'$SectionNameCompare'"' exists in File.'
 #
-SectionNameCheck=$(cat $file | grep "$SectionName")
+SectionNameCheck=$(cat "$file" | grep "$SectionName")
 #
 if [ "$SectionNameCheck" == "$SectionNameCompare" ]
 	then
@@ -83,7 +87,7 @@ fi
 /bin/echo # Outputting a Blank Line for Reporting Purposes
 /bin/echo 'Checking URL '"'$URL'"' exists in File.'
 #
-URLCheck=$(cat $file | grep "$HeaderAddedURL")
+URLCheck=$(cat "$file" | grep "$HeaderAddedURL")
 #
 if [ "$URLCheck" == "$HeaderAddedURL" ]
 	then
@@ -136,16 +140,14 @@ fi
 #
 ShortcutCreate(){
 #
-
-
 if [ "$CreateShortcut" == "YES" ]
 	then
 		/bin/echo 'Creating Shortcut'
-		/bin/echo [InternetShortcut] > /Users/$Username/Desktop/$ShortCutName
-		/bin/echo >> /Users/$Username/Desktop/$ShortCutName
-		/bin/echo URL=$URL >> /Users/$Username/Desktop/$ShortCutName
-		chown $Username /Users/$Username/Desktop/$ShortCutName
+		/bin/echo [InternetShortcut] > "${ShortCutPath}"
+		/bin/echo >> "${ShortCutPath}"
+		/bin/echo URL=$URL >> "${ShortCutPath}"
 		#
+        chown $Username "${ShortCutPath}"
 		/bin/echo 'Created'
 fi
 #
