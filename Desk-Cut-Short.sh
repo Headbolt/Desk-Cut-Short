@@ -17,11 +17,13 @@
 #
 # HISTORY
 #
-#   Version: 1.1 - 26/08/2021
+#   Version: 1.2 - 09/09/2021
 #
 #   - 25/08/2021 - V1.0 - Created by Headbolt
 #   - 26/08/2021 - V1.1 - Updated by Headbolt
 #							Updated to deal with issues around Spaces in the file name
+#	- 09/09/2021 - V1.2 - Updated by Headbolt
+#							Bug Fixes
 #
 ###############################################################################################################################################
 #
@@ -65,37 +67,36 @@ if [ -f "$file" ]
     then
         /bin/echo 'YES'
 		FileCheck=EXIST
+		/bin/echo # Outputting a Blank Line for Reporting Purposes
+		/bin/echo 'Checking Section Name '"'$SectionNameCompare'"' exists in File.'
+		#
+		SectionNameCheck=$(cat "$file" | grep "$SectionName")
+		#
+		if [ "$SectionNameCheck" == "$SectionNameCompare" ]
+			then
+				SectionNamePresent=YES
+				/bin/echo "YES"
+			else
+				SectionNamePresent=NO
+				/bin/echo "NO"
+		fi
+		#
+		/bin/echo # Outputting a Blank Line for Reporting Purposes
+		/bin/echo 'Checking URL '"'$URL'"' exists in File.'
+		#
+		URLCheck=$(cat "$file" | grep "$HeaderAddedURL")
+		#
+		if [ "$URLCheck" == "$HeaderAddedURL" ]
+			then
+				URLPresent=YES
+				/bin/echo "YES"
+				else
+				URLPresent=NO
+				/bin/echo "NO"
+		fi
     else
         /bin/echo 'NO'
         FileCheck=NOTEXIST
-fi
-#
-/bin/echo # Outputting a Blank Line for Reporting Purposes
-/bin/echo 'Checking Section Name '"'$SectionNameCompare'"' exists in File.'
-#
-SectionNameCheck=$(cat "$file" | grep "$SectionName")
-#
-if [ "$SectionNameCheck" == "$SectionNameCompare" ]
-	then
-		SectionNamePresent=YES
-		/bin/echo "YES"
-	else
-		SectionNamePresent=NO
-		/bin/echo "NO"
-fi
-#
-/bin/echo # Outputting a Blank Line for Reporting Purposes
-/bin/echo 'Checking URL '"'$URL'"' exists in File.'
-#
-URLCheck=$(cat "$file" | grep "$HeaderAddedURL")
-#
-if [ "$URLCheck" == "$HeaderAddedURL" ]
-	then
-		URLPresent=YES
-		/bin/echo "YES"
-		else
-		URLPresent=NO
-		/bin/echo "NO"
 fi
 #
 }
@@ -136,16 +137,17 @@ fi
 #
 ###############################################################################################################################################
 #
-# Write To Preload Inventory Table Function
+# Shortcut Creation Function
 #
 ShortcutCreate(){
 #
 if [ "$CreateShortcut" == "YES" ]
 	then
-		/bin/echo 'Creating Shortcut'
-		/bin/echo [InternetShortcut] > "${ShortCutPath}"
+		/bin/echo 'Creating Shortcut' '"'"${ShortCutPath}"'"'
+        /bin/echo # Outputting a Blank Line for Reporting Purposes
+		/bin/echo '[InternetShortcut]' > "${ShortCutPath}"
 		/bin/echo >> "${ShortCutPath}"
-		/bin/echo URL=$URL >> "${ShortCutPath}"
+		/bin/echo "URL=$URL" >> "${ShortCutPath}"
 		#
         chown $Username "${ShortCutPath}"
 		/bin/echo 'Created'
@@ -162,9 +164,7 @@ SectionEnd
 SectionEnd(){
 #
 /bin/echo # Outputting a Blank Line for Reporting Purposes
-#
 /bin/echo  ----------------------------------------------- # Outputting a Dotted Line for Reporting Purposes
-#
 /bin/echo # Outputting a Blank Line for Reporting Purposes
 #
 }
@@ -175,15 +175,9 @@ SectionEnd(){
 #
 ScriptEnd(){
 #
-# Outputting a Blank Line for Reporting Purposes
-#/bin/echo
-#
 /bin/echo Ending Script '"'$ScriptName'"'
-#
 /bin/echo # Outputting a Blank Line for Reporting Purposes
-#
 /bin/echo  ----------------------------------------------- # Outputting a Dotted Line for Reporting Purposes
-#
 /bin/echo # Outputting a Blank Line for Reporting Purposes
 #
 }
